@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+
+
+  <html class="light page-post">
+
+
+<head>
+  <meta charset="utf-8">
+  
+  <title>Rails on Docker | Sai&#39;s Note</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+    <meta name="keywords" content="sai,前端,前端开发,用户体验,frontend,ruby,JavaScript,vue,python" />
+  
+
+  <meta name="description" content="为什么要用docker 更高效的利用系统资源 由于容器不需要进行硬件虚拟以及运行完整操作系统等额外开销，Docker 对系统资源的利用率更高。无论是应用执行速度、内存损耗或者文件存储速度，都要比传统虚拟机技术更高效。因此，相比虚拟机技术，一个相同配置的主机，往往可以运行更多数量的应用。  更快速的启用时间 传统的虚拟机技术启动应用服务往往需要数分钟，而 Docker 容器应用，由于直接运行于宿主内">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rails on Docker">
+<meta property="og:url" content="http://example.com/2021/01/13/Rails-on-Docker/index.html">
+<meta property="og:site_name" content="Sai&#39;s Note">
+<meta property="og:description" content="为什么要用docker 更高效的利用系统资源 由于容器不需要进行硬件虚拟以及运行完整操作系统等额外开销，Docker 对系统资源的利用率更高。无论是应用执行速度、内存损耗或者文件存储速度，都要比传统虚拟机技术更高效。因此，相比虚拟机技术，一个相同配置的主机，往往可以运行更多数量的应用。  更快速的启用时间 传统的虚拟机技术启动应用服务往往需要数分钟，而 Docker 容器应用，由于直接运行于宿主内">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-01-13T03:59:56.000Z">
+<meta property="article:modified_time" content="2021-01-13T04:01:50.792Z">
+<meta property="article:author" content="sai">
+<meta name="twitter:card" content="summary">
+
+  
+
+  
+    <link rel="icon" href="/favicon.ico">
+  
+
+  <link href="/css/styles.css?v=c114cbeddx" rel="stylesheet">
+
+
+  
+    
+<link rel="stylesheet" href="/css/personal-style.css">
+
+  
+
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-38189205-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?57e94d016e201fba3603a8a2b0263af0";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+  
+  <script type="text/javascript">
+	(function(){
+	    var bp = document.createElement('script');
+	    var curProtocol = window.location.protocol.split(':')[0];
+	    if (curProtocol === 'https') {
+	        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+	    }
+	    else {
+	        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+	    }
+	    var s = document.getElementsByTagName("script")[0];
+	    s.parentNode.insertBefore(bp, s);
+	})();
+  </script>
+
+
+
+  
+    <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+  
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<body>
+
+
+  
+    <span id="toolbox-mobile" class="toolbox-mobile">盒子</span>
+  
+
+  <div class="post-header CENTER">
+   
+  <div class="toolbox">
+    <a class="toolbox-entry" href="/">
+      <span class="toolbox-entry-text">盒子</span>
+      <i class="icon-angle-down"></i>
+      <i class="icon-home"></i>
+    </a>
+    <ul class="list-toolbox">
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/archives/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            博客
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/category/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            分类
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/tag/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            标签
+          </a>
+        </li>
+      
+        <li class="item-toolbox">
+          <a
+            class="CIRCLE"
+            href="/about/"
+            rel="noopener noreferrer"
+            target="_self"
+            >
+            关于
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+</div>
+
+
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8docker"><span class="toc-text">为什么要用docker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85docker"><span class="toc-text">安装docker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85docker-compose"><span class="toc-text">安装docker-compose</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E9%98%B6%E6%AE%B5%E6%9E%84%E5%BB%BA"><span class="toc-text">多阶段构建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker-swarm"><span class="toc-text">docker swarm</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#docker%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5"><span class="toc-text">docker健康检查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%BA%94%E7%94%A8%E6%96%B0%E9%85%8D%E7%BD%AE"><span class="toc-text">修改配置文件应用新配置</span></a>
+  </div>
+
+
+
+<div class="content content-post CENTER">
+   <article id="post-Rails-on-Docker" class="article article-type-post" itemprop="blogPost">
+  <header class="article-header">
+    <h1 class="post-title">Rails on Docker</h1>
+
+    <div class="article-meta">
+      <span>
+        <i class="icon-calendar"></i>
+        <span>2021.01.13</span>
+      </span>
+
+      
+        <span class="article-author">
+          <i class="icon-user"></i>
+          <span>sai</span>
+        </span>
+      
+
+      
+
+
+      
+        <span>
+          <i class="icon-comment"></i>
+          <a target="_blank" rel="noopener" href="https://showmecode.cc//2021/01/13/Rails-on-Docker/#disqus_thread"></a>
+        </span>
+      
+
+      
+      <i class="fa fa-eye"></i> 
+        <span id="busuanzi_container_page_pv">
+           &nbsp热度 <span id="busuanzi_value_page_pv">
+           <i class="fa fa-spinner fa-spin"></i></span>℃
+        </span>
+      
+      
+    </div>
+  </header>
+
+  <div class="article-content">
+    
+      <h3 id="为什么要用docker"><a href="#为什么要用docker" class="headerlink" title="为什么要用docker"></a>为什么要用docker</h3><ul>
+<li><p>更高效的利用系统资源</p>
+<p>由于容器不需要进行硬件虚拟以及运行完整操作系统等额外开销，<code>Docker</code> 对系统资源的利用率更高。无论是应用执行速度、内存损耗或者文件存储速度，都要比传统虚拟机技术更高效。因此，相比虚拟机技术，一个相同配置的主机，往往可以运行更多数量的应用。</p>
+</li>
+<li><p>更快速的启用时间</p>
+<p>传统的虚拟机技术启动应用服务往往需要数分钟，而 <code>Docker</code> 容器应用，由于直接运行于宿主内核，无需启动完整的操作系统，因此可以做到秒级、甚至毫秒级的启动时间。大大的节约了开发、测试、部署的时间。</p>
+</li>
+<li><p>一致的运行环境</p>
+<p>开发过程中一个常见的问题是环境一致性问题。由于开发环境、测试环境、生产环境不一致，导致有些 bug 并未在开发过程中被发现。而 <code>Docker</code> 的镜像提供了除内核外完整的运行时环境，确保了应用运行环境一致性，从而不会再出现 <em>「这段代码在我机器上没问题啊」</em> 这类问题。</p>
+</li>
+<li><p>持续交付和部署</p>
+<p>对开发和运维（<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/DevOps">DevOps</a>）人员来说，最希望的就是一次创建或配置，可以在任意地方正常运行。</p>
+<p>使用 <code>Docker</code> 可以通过定制应用镜像来实现持续集成、持续交付、部署。开发人员可以通过 <a href="">Dockerfile</a> 来进行镜像构建，并结合 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Continuous_integration">持续集成(Continuous Integration)</a> 系统进行集成测试，而运维人员则可以直接在生产环境中快速部署该镜像，甚至结合 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Continuous_delivery">持续部署(Continuous Delivery/Deployment)</a> 系统进行自动部署。</p>
+<p>而且使用 <a href=""><code>Dockerfile</code></a> 使镜像构建透明化，不仅仅开发团队可以理解应用运行环境，也方便运维团队理解应用运行所需条件，帮助更好的生产环境中部署该镜像。</p>
+</li>
+<li><p>更轻松的迁移</p>
+<p>由于 <code>Docker</code> 确保了执行环境的一致性，使得应用的迁移更加容易。<code>Docker</code> 可以在很多平台上运行，无论是物理机、虚拟机、公有云、私有云，甚至是笔记本，其运行结果是一致的。因此用户可以很轻易的将在一个平台上运行的应用，迁移到另一个平台上，而不用担心运行环境的变化导致应用无法正常运行的情况。</p>
+</li>
+<li><p>更轻松的维护和扩展</p>
+<p><code>Docker</code> 使用的分层存储以及镜像的技术，使得应用重复部分的复用更为容易，也使得应用的维护更新更加简单，基于基础镜像进一步扩展镜像也变得非常简单。此外，<code>Docker</code> 团队同各个开源项目团队一起维护了一大批高质量的 <a target="_blank" rel="noopener" href="https://hub.docker.com/search/?type=image&image_filter=official">官方镜像</a>，既可以直接在生产环境使用，又可以作为基础进一步定制，大大的降低了应用服务的镜像制作成本。</p>
+</li>
+</ul>
+<h3 id="安装docker"><a href="#安装docker" class="headerlink" title="安装docker"></a>安装docker</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -u filedown:&#39;5DBQutXO!7$M!VCBg&#39; http:&#x2F;&#x2F;down.dosjksds.com:18540&#x2F;deploy&#x2F;install_docker.sh | bash</span><br></pre></td></tr></table></figure>
+<h3 id="安装docker-compose"><a href="#安装docker-compose" class="headerlink" title="安装docker-compose"></a>安装docker-compose</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo curl -L &quot;https:&#x2F;&#x2F;github.com&#x2F;docker&#x2F;compose&#x2F;releases&#x2F;download&#x2F;1.24.0&#x2F;docker-compose-$(uname -s)-$(uname -m)&quot; -o &#x2F;usr&#x2F;local&#x2F;bin&#x2F;docker-compose</span><br></pre></td></tr></table></figure>
+<h2 id="多阶段构建"><a href="#多阶段构建" class="headerlink" title="多阶段构建"></a>多阶段构建</h2><p>多阶段构建更多的是用来解决镜像过大的问题，创建好镜像后会发现自己的镜像有好几G，这时候可以考虑用多阶段构建。</p>
+<p>多阶段构建，会允许一个Dockerfile中出现多个<code>FROM</code>命令。每个<code>FROM</code>都是一个新的构建阶段。</p>
+<h2 id="docker-swarm"><a href="#docker-swarm" class="headerlink" title="docker swarm"></a>docker swarm</h2><p>docker服务不中断的方法可以采用上传两个镜像，一个镜像A，一个镜像A的备份镜像，A_backup，然后启动两个端口，一个是3000，另一个是4000，当镜像发生改变的时候，可以先把备份镜像<code>A_backup</code>删除掉，然后重新拉取备份镜像A_backup，这时候备份镜像就是最新的镜像，然后把镜像A的容器停止，因为配置了<code>nginx</code>的<code>upstrem</code>所以这时候3000端口会转移到4000端口，达到服务不中断更新代码的目的</p>
+<p>但是这样每次更新，都需要重复的去停止容器、删除容器、删除镜像的操作，不是太灵活</p>
+<p>docker swarm是docker自带的集群服务可以更好的解决这个问题</p>
+<p>1.创建应用和服务</p>
+<p><code>docker stack deploy -c docker-compose.yml myapp</code></p>
+<p>2.查看所有服务</p>
+<p><code>docker service ls</code></p>
+<p>3.轮训更新</p>
+<p><code>docker service update --image registry.dosjksds.com:5000/syq:1.0.0.dev myapp --with-registry-auth --update-delay 30s --update-parallelism 1</code></p>
+<ul>
+<li><p><code>--update-parallelism</code> 设置更新的副本数量(比如我有2个副本，我可以先更新一个，然后等这一个更新完成再去更新下一个)</p>
+</li>
+<li><p><code>--update-delay </code> 指定滚动更新的间隔时间</p>
+</li>
+</ul>
+<h2 id="docker健康检查"><a href="#docker健康检查" class="headerlink" title="docker健康检查"></a>docker健康检查</h2><p>ruby</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">healthcheck:</span></span><br><span class="line">  <span class="symbol">test:</span> <span class="string">&quot;curl -fs localhost:3000 || exit 1&quot;</span></span><br><span class="line">  <span class="symbol">interval:</span> 30s</span><br><span class="line">  <span class="symbol">timeout:</span> 40s</span><br><span class="line">  <span class="symbol">retries:</span> <span class="number">60</span></span><br></pre></td></tr></table></figure>
+<p>sidekiq</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">healthcheck:</span></span><br><span class="line">  <span class="symbol">test:</span> <span class="string">&quot;stat /home/syq/tmp/sidekiq.pid || exit 1&quot;</span></span><br><span class="line">  <span class="symbol">interval:</span> 30s</span><br><span class="line">  <span class="symbol">timeout:</span> 40s</span><br><span class="line">  <span class="symbol">retries:</span> <span class="number">60</span></span><br></pre></td></tr></table></figure>
+<h2 id="修改配置文件应用新配置"><a href="#修改配置文件应用新配置" class="headerlink" title="修改配置文件应用新配置"></a>修改配置文件应用新配置</h2><p>当需要修改config配置的内容时，创建新配置（使用docker config create）然后更新服务以删除先前配置的config，服务命令<code>--config-rm</code>和<code>--config-add</code>:</p>
+<p>比如我修改了secrets.yml，而现在在执行<code>docker config ls</code>时候已经存在secrets_conf，这时候我执行下面命令，重新创建个新的配置，比如创建secrets_conf_1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker config create secrets_conf_1 config&#x2F;secrets.yml</span><br></pre></td></tr></table></figure>
+<p>然后执行下面进行config更新</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker service update --config-rm secrets_conf --config-add src&#x3D;secrets_conf_1,target&#x3D;&#x2F;home&#x2F;app&#x2F;aixuexi&#x2F;config&#x2F;secrets.yml aixuexi_app</span><br></pre></td></tr></table></figure>
+    
+  </div>
+
+</article>
+
+
+   
+
+   
+  <div class="box-prev-next clearfix">
+    <a class="show pull-left" href="/2020/02/22/%F0%9F%90%82%E5%B0%8F%E5%A4%A9%E6%90%AD%E5%BB%BA%E6%B5%81%E7%A8%8B/">
+        <i class="icon icon-angle-left"></i>
+    </a>
+    <a class="hide pull-right" href="/">
+        <i class="icon icon-angle-right"></i>
+    </a>
+  </div>
+
+
+
+
+</div>
+
+
+  <a id="backTop" class="back-top">
+    <i class="icon-angle-up"></i>
+  </a>
+
+
+
+
+  <div class="modal" id="modal">
+  <span id="cover" class="cover hide"></span>
+  <div id="modal-dialog" class="modal-dialog hide-dialog">
+    <div class="modal-header">
+      <span id="close" class="btn-close">关闭</span>
+    </div>
+    <hr>
+    <div class="modal-body">
+      <ul class="list-toolbox">
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/archives/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              博客
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/category/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              分类
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/tag/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              标签
+            </a>
+          </li>
+        
+          <li class="item-toolbox">
+            <a
+              class="CIRCLE"
+              href="/about/"
+              rel="noopener noreferrer"
+              target="_self"
+              >
+              关于
+            </a>
+          </li>
+        
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+
+
+  
+      <div class="fexo-comments comments-post">
+    
+  <section class="disqus-comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+  </section>
+
+  <script>
+    var disqus_shortname = 'sai';
+    
+    var disqus_url = 'http://example.com/2021/01/13/Rails-on-Docker/';
+    
+    (function(){
+      var dsq = document.createElement('script');
+      dsq.type = 'text/javascript';
+      dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+
+  <script id="dsq-count-scr" src="//sai.disqus.com/count.js" async></script>
+
+
+
+    
+
+    
+    
+
+    
+
+    
+    
+
+    
+
+  </div>
+
+  
+
+  <script type="text/javascript">
+  function loadScript(url, callback) {
+    var script = document.createElement('script')
+    script.type = 'text/javascript';
+
+    if (script.readyState) { //IE
+      script.onreadystatechange = function() {
+        if (script.readyState == 'loaded' ||
+          script.readyState == 'complete') {
+          script.onreadystatechange = null;
+          callback();
+        }
+      };
+    } else { //Others
+      script.onload = function() {
+        callback();
+      };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  window.onload = function() {
+    loadScript('/js/bundle.js?235683', function() {
+      // load success
+    });
+  }
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","model":{"scale":1,"hHeadPos":0.5,"vHeadPos":0.618,"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"superSample":2,"width":350,"height":500,"position":"left","hOffset":0,"vOffset":-50},"mobile":{"show":false,"scale":0.5},"react":{"opacityDefault":0.7,"opacityOnHover":0.2},"log":false,"tagMode":false});</script></body>
+</html>
